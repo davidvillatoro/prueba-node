@@ -1,5 +1,5 @@
 const Role = require("../models/role")
-const Usuario = require("../models/usuario");
+const { Usuario,Categoria, Producto} = require("../models");
 
 
 
@@ -32,9 +32,39 @@ const Usuario = require("../models/usuario");
     }; 
 
 
+    /* validador personalido de categorias  */
+    const existeCategoriaporId = async (id) =>{
+        const existeProducto =  await Categoria.findById(id);
+            if(!existeProducto ){
+                  throw new Error(`el correo ${ id} , ya esta registrado`);
+        }
+    };
+
+
+    //validar el id de productos
+     const existeProductoporId = async (id) =>{
+        const existeProducto =  await Producto.findById(id);
+            if(!existeProducto ){
+                  throw new Error(`el correo ${ id} , ya esta registrado`);
+        }
+    };
+
+    
+    const coleccionesPermitidas = (coleccion = "" , colecciones = []) =>{
+
+        const incluida = colecciones.includes(coleccion);
+        if (!incluida) {
+            throw new Error (`la coleccion ${coleccion} no es permitida ${colecciones}`)
+        }
+
+        return true;
+    };
 
 module.exports ={
     esRolValido,
     existeEmail,
-    existeUsuarioPOrID
+    existeUsuarioPOrID,
+    existeCategoriaporId,
+    existeProductoporId,
+    coleccionesPermitidas
 }

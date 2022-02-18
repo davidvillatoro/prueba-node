@@ -1,16 +1,25 @@
 const express = require('express');
 const cors = require("cors");
 const { dbConnection } = require('../database/config');
+const fileUpload = require("express-fileupload");
 
 class Server{
 
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
-        this.usuariosRoutePath = "/api/usuarios";  // para hacer rutas mas facil copiar y pegar ejemplo en los routes abajo
 
-        this.authPath = "/api/auth"
+        this.paths ={
+            usuarios: "/api/usuarios",
+            auth: "/api/auth",
+            categorias: "/api/categorias",
+            productos: "/api/productos",
+            Buscar: "/api/buscar",
+            uploads: "/api/uploads"
+        }
+
         
+      
         //connexion a al BBDD
         this.conectarBD();
         //middlewres funciones que se ejecutan al levantar el servidor
@@ -33,12 +42,24 @@ class Server{
 
         //directorio publico
         this.app.use( express.static('public') );
+
+        //para manejar el fileupload - o carga de archivos
+        this.app.use(fileUpload({
+            useTempFiles:true,
+            tempFileDir : "/tmp/",
+            createParentPath: true
+        }));
     }
 
     routes(){
        
-        this.app.use( this.usuariosRoutePath, require("../routers/user"));
-        this.app.use(this.authPath, require("../routers/auth"));
+        this.app.use( this.paths.usuarios, require("../routers/user"));
+        this.app.use(this.paths.auth, require("../routers/auth"));
+        this.app.use(this.paths.categorias, require("../routers/categorias"));
+        this.app.use(this.paths.productos, require("../routers/productos"));
+        this.app.use(this.paths.Buscar, require("../routers/buscar"));
+        this.app.use(this.paths.uploads, require("../routers/uploads"));
+        
     }
 
 
